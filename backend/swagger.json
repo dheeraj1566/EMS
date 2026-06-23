@@ -39,6 +39,55 @@
         },
         "required": ["email", "password"]
       }
+      ,
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "employeeCode": { "type": "string" },
+          "appPassword": { "type": "string" },
+          "employmentType": { "type": "string" },
+          "country": { "type": "string" },
+          "state": { "type": "string" },
+          "district": { "type": "string" },
+          "branch": { "type": "string" },
+          "area": { "type": "string" },
+          "client": { "type": "string", "description": "Client ObjectId" },
+          "unit": { "type": "string", "description": "Unit ObjectId" },
+          "fileNo": { "type": "string" },
+          "designation": { "type": "string" },
+          "dateOfJoining": { "type": "string", "format": "date" },
+          "bioDataSubmissionDate": { "type": "string", "format": "date" },
+          "personalDetails": {
+            "type": "object",
+            "properties": {
+              "salutation": { "type": "string" },
+              "firstName": { "type": "string" },
+              "middleName": { "type": "string" },
+              "lastName": { "type": "string" },
+              "fatherName": { "type": "string" },
+              "motherName": { "type": "string" },
+              "spouseName": { "type": "string" },
+              "gender": { "type": "string" },
+              "maritalStatus": { "type": "string" },
+              "dob": { "type": "string", "format": "date" }
+            }
+          },
+          "communication": { "type": "object" },
+          "kyc": { "type": "object" },
+          "bankDetails": { "type": "object" },
+          "education": { "type": "object" },
+          "compliance": { "type": "object" },
+          "documents": { "type": "object" },
+          "physicalDetails": { "type": "object" },
+          "policeVerification": { "type": "object" },
+          "exService": { "type": "object" },
+          "gunman": { "type": "object" },
+          "training": { "type": "array", "items": { "type": "object" } },
+          "medical": { "type": "array", "items": { "type": "object" } },
+          "currentStatus": { "type": "string", "enum": ["Active", "Left", "Terminated", "Rejoined"] }
+        },
+        "required": ["employeeCode"]
+      }
     }
   },
   "paths": {
@@ -130,11 +179,33 @@
     ,
     "/api/employees": {
       "get": { "summary": "Get employees", "responses": { "200": { "description": "OK" } } },
-      "post": { "summary": "Create employee", "responses": { "201": { "description": "Created" } } }
+      "post": {
+        "summary": "Create employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Employee" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
     },
     "/api/employees/{id}": {
       "get": { "summary": "Get employee by id", "responses": { "200": { "description": "OK" } } },
-      "patch": { "summary": "Update employee", "responses": { "200": { "description": "Updated" } } },
+      "patch": {
+        "summary": "Update employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Employee" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Updated" } }
+      },
       "delete": { "summary": "Delete employee", "responses": { "204": { "description": "Deleted" } } }
     }
   }
