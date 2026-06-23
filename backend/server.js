@@ -3,6 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
@@ -11,6 +13,7 @@ const AppError = require("./utils/AppError");
 const authRoutes = require("./routes/authRoutes");
 const clientRoutes = require("./routes/clientRoutes");
 const reportClientRoutes = require("./routes/reportClientRoutes");
+const employeeRoutes = require("./routes/employeeRoutes");
 
 const app = express();
 
@@ -20,9 +23,15 @@ if (process.env.NODE_ENV !== "test") {
   app.use(morgan("dev"));
 }
 
+// Serve Swagger UI at /api-docs (no separate routes/controllers used)
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Optional: raw JSON
+app.get("/swagger.json", (req, res) => res.json(swaggerDocument));
+
 app.use("/api/auth", authRoutes);
 app.use("/api/clients", clientRoutes);
 app.use("/api/report-clients", reportClientRoutes);
+app.use("/api/employees", employeeRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Route not found: ${req.originalUrl}`, 404));
