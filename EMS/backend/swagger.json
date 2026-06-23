@@ -1,0 +1,212 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "EMS API",
+    "version": "1.0.0",
+    "description": "EMS backend API documentation"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    },
+    {
+      "url": "https://ems-wt1l.onrender.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UserRegister": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        },
+        "required": ["email", "password"]
+      },
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        },
+        "required": ["email", "password"]
+      }
+      ,
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "employeeCode": { "type": "string" },
+          "appPassword": { "type": "string" },
+          "employmentType": { "type": "string" },
+          "country": { "type": "string" },
+          "state": { "type": "string" },
+          "district": { "type": "string" },
+          "branch": { "type": "string" },
+          "area": { "type": "string" },
+          "client": { "type": "string", "description": "Client ObjectId" },
+          "unit": { "type": "string", "description": "Unit ObjectId" },
+          "fileNo": { "type": "string" },
+          "designation": { "type": "string" },
+          "dateOfJoining": { "type": "string", "format": "date" },
+          "bioDataSubmissionDate": { "type": "string", "format": "date" },
+          "personalDetails": {
+            "type": "object",
+            "properties": {
+              "salutation": { "type": "string" },
+              "firstName": { "type": "string" },
+              "middleName": { "type": "string" },
+              "lastName": { "type": "string" },
+              "fatherName": { "type": "string" },
+              "motherName": { "type": "string" },
+              "spouseName": { "type": "string" },
+              "gender": { "type": "string" },
+              "maritalStatus": { "type": "string" },
+              "dob": { "type": "string", "format": "date" }
+            }
+          },
+          "communication": { "type": "object" },
+          "kyc": { "type": "object" },
+          "bankDetails": { "type": "object" },
+          "education": { "type": "object" },
+          "compliance": { "type": "object" },
+          "documents": { "type": "object" },
+          "physicalDetails": { "type": "object" },
+          "policeVerification": { "type": "object" },
+          "exService": { "type": "object" },
+          "gunman": { "type": "object" },
+          "training": { "type": "array", "items": { "type": "object" } },
+          "medical": { "type": "array", "items": { "type": "object" } },
+          "currentStatus": { "type": "string", "enum": ["Active", "Left", "Terminated", "Rejoined"] }
+        },
+        "required": ["employeeCode"]
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserRegister" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User registered" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserLogin" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "summary": "Get current user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User data" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/clients": {
+      "get": { "summary": "Get clients", "responses": { "200": { "description": "OK" } } },
+      "post": { "summary": "Create client", "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/clients/{clientId}": {
+      "get": { "summary": "Get client by id", "responses": { "200": { "description": "OK" } } },
+      "patch": { "summary": "Update client", "responses": { "200": { "description": "Updated" } } },
+      "delete": { "summary": "Delete client", "responses": { "204": { "description": "Deleted" } } }
+    },
+    "/api/clients/{clientId}/units": {
+      "get": { "summary": "Get units for client", "responses": { "200": { "description": "OK" } } },
+      "post": { "summary": "Add unit to client", "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/clients/{clientId}/units/{unitId}": {
+      "get": { "summary": "Get unit", "responses": { "200": { "description": "OK" } } },
+      "patch": { "summary": "Update unit", "responses": { "200": { "description": "Updated" } } },
+      "delete": { "summary": "Delete unit", "responses": { "204": { "description": "Deleted" } } }
+    },
+    "/api/clients/{clientId}/units/{unitId}/salary-rates": {
+      "post": { "summary": "Add salary rate breakup", "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/clients/{clientId}/units/{unitId}/salary-rates/{rateId}": {
+      "patch": { "summary": "Update salary rate", "responses": { "200": { "description": "Updated" } } },
+      "delete": { "summary": "Delete salary rate", "responses": { "204": { "description": "Deleted" } } }
+    },
+    "/api/clients/{clientId}/units/{unitId}/bill-rates": {
+      "post": { "summary": "Add bill rate breakup", "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/clients/{clientId}/units/{unitId}/bill-rates/{rateId}": {
+      "patch": { "summary": "Update bill rate", "responses": { "200": { "description": "Updated" } } },
+      "delete": { "summary": "Delete bill rate", "responses": { "204": { "description": "Deleted" } } }
+    },
+    "/api/report-clients": {
+      "get": { "summary": "Get report clients", "responses": { "200": { "description": "OK" } } },
+      "post": { "summary": "Create report client", "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/report-clients/{id}": {
+      "get": { "summary": "Get report client", "responses": { "200": { "description": "OK" } } },
+      "patch": { "summary": "Update report client", "responses": { "200": { "description": "Updated" } } },
+      "delete": { "summary": "Delete report client", "responses": { "204": { "description": "Deleted" } } }
+    }
+    ,
+    "/api/employees": {
+      "get": { "summary": "Get employees", "responses": { "200": { "description": "OK" } } },
+      "post": {
+        "summary": "Create employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Employee" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/employees/{id}": {
+      "get": { "summary": "Get employee by id", "responses": { "200": { "description": "OK" } } },
+      "patch": {
+        "summary": "Update employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Employee" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Updated" } }
+      },
+      "delete": { "summary": "Delete employee", "responses": { "204": { "description": "Deleted" } } }
+    }
+  }
+}
